@@ -21,8 +21,9 @@
   var canStringify = typeof(JSON) !== "undefined" && typeof(JSON.stringify) !== "undefined";
   var eventQueue = [];
   var page = ahoy.page || window.location.pathname;
-  var visitsUrl = ahoy.visitsUrl || "/ahoy/visits"
-  var eventsUrl = ahoy.eventsUrl || "/ahoy/events"
+  var visitsUrl = ahoy.visitsUrl || "/ahoy/visits";
+  var eventsUrl = ahoy.eventsUrl || "/ahoy/events";
+  var userPrefs = ahoy.userPrefs || {};
 
   // cookies
 
@@ -169,7 +170,8 @@
         platform: ahoy.platform || "Web",
         landing_page: window.location.href,
         screen_width: window.screen.width,
-        screen_height: window.screen.height
+        screen_height: window.screen.height,
+        user_prefs: userPrefs
       };
 
       // referrer
