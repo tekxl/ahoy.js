@@ -181,12 +181,16 @@
 
       log(data);
 
-      $.post(visitsUrl, data, setReady, "json");
+      //$.post(visitsUrl, data, setReady, "json");
     } else {
       log("Cookies disabled");
       setReady();
     }
   }
+
+  ahoy.createVisit = function () {
+    $.post(visitsUrl, data, setReady, "json");
+  };
 
   ahoy.getVisitId = ahoy.getVisitToken = function () {
     return visitId;
