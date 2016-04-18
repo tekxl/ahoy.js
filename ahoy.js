@@ -18,6 +18,7 @@
   var visitorTtl = 2 * 365 * 24 * 60; // 2 years
   var isReady = false;
   var queue = [];
+  var chaperoneData = {};
   var canStringify = typeof(JSON) !== "undefined" && typeof(JSON.stringify) !== "undefined";
   var eventQueue = [];
   var page = ahoy.page || window.location.pathname;
@@ -181,6 +182,8 @@
 
       log(data);
 
+      chaperoneData = data
+
       //$.post(visitsUrl, data, setReady, "json");
     } else {
       log("Cookies disabled");
@@ -189,7 +192,7 @@
   }
 
   ahoy.createVisit = function () {
-    $.post(visitsUrl, data, setReady, "json");
+    $.post(visitsUrl, chaperoneData, setReady, "json");
   };
 
   ahoy.getVisitId = ahoy.getVisitToken = function () {
