@@ -11,7 +11,7 @@
 (function (window) {
   "use strict";
 
-  var ahoy = window.chaperoneSettings || window.ChaperoneSettings || {};
+  var ahoy = window.Chaperone || {};
   var $ = window.jQuery || window.Zepto || window.$;
   var visitId, visitorId, track;
   var visitTtl = 4 * 60; // 4 hours
@@ -24,7 +24,7 @@
   var page = ahoy.page || window.location.pathname;
   var visitsUrl = ahoy.visitsUrl || "/ahoy/visits";
   var eventsUrl = ahoy.eventsUrl || "/ahoy/events";
-  var userPrefs = ahoy.userPrefs || {};
+  var userPrefs = window.ChaperoneSettings || {};
 
   // cookies
 
@@ -290,5 +290,5 @@
     trackEvent(eventQueue[i]);
   }
 
-  window.ahoy = ahoy;
+  window.Chaperone = ahoy;
 }(window));
