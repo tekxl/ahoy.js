@@ -18,7 +18,6 @@
   var visitorTtl = 2 * 365 * 24 * 60; // 2 years
   var isReady = false;
   var queue = [];
-  var chaperoneData = {};
   var canStringify = typeof(JSON) !== "undefined" && typeof(JSON.stringify) !== "undefined";
   var eventQueue = [];
   var page = ahoy.page || window.location.pathname;
@@ -142,57 +141,53 @@
   visitorId = getCookie("ahoy_visitor");
   track = getCookie("ahoy_track");
 
-  if (visitId && visitorId && !track) {
-    // TODO keep visit alive?
-    log("Active visit");
-    setReady();
-  } else {
-    if (track) {
-      destroyCookie("ahoy_track");
-    }
-
-    if (!visitId) {
-      visitId = generateId();
-      setCookie("ahoy_visit", visitId, visitTtl);
-    }
-
-    // make sure cookies are enabled
-    if (getCookie("ahoy_visit")) {
-      log("Visit started");
-
-      if (!visitorId) {
-        visitorId = generateId();
-        setCookie("ahoy_visitor", visitorId, visitorTtl);
-      }
-
-      var data = {
-        visit_token: visitId,
-        visitor_token: visitorId,
-        platform: ahoy.platform || "Web",
-        landing_page: window.location.href,
-        screen_width: window.screen.width,
-        screen_height: window.screen.height,
-        user_prefs: userPrefs
-      };
-
-      // referrer
-      if (document.referrer.length > 0) {
-        data.referrer = document.referrer;
-      }
-
-      log(data);
-
-      chaperoneData = data
-
-      //$.post(visitsUrl, data, setReady, "json");
-    } else {
-      log("Cookies disabled");
-      setReady();
-    }
-  }
-
   ahoy.createVisit = function () {
-    $.post(visitsUrl, chaperoneData, setReady, "json");
+    if (visitId && visitorId && !track) {
+      // TODO keep visit alive?
+      log("Active visit");
+      setReady();
+    } else {
+      if (track) {
+        destroyCookie("ahoy_track");
+      }
+
+      if (!visitId) {
+        visitId = generateId();
+        setCookie("ahoy_visit", visitId, visitTtl);
+      }
+
+      // make sure cookies are enabled
+      if (getCookie("ahoy_visit")) {
+        log("Visit started");
+
+        if (!visitorId) {
+          visitorId = generateId();
+          setCookie("ahoy_visitor", visitorId, visitorTtl);
+        }
+
+        var data = {
+          visit_token: visitId,
+          visitor_token: visitorId,
+          platform: ahoy.platform || "Web",
+          landing_page: window.location.href,
+          screen_width: window.screen.width,
+          screen_height: window.screen.height,
+          user_prefs: userPrefs
+        };
+
+        // referrer
+        if (document.referrer.length > 0) {
+          data.referrer = document.referrer;
+        }
+
+        log(data);
+
+        $.post(visitsUrl, data, setReady, "json");
+      } else {
+        log("Cookies disabled");
+        setReady();
+      }
+    }
   };
 
   ahoy.getVisitId = ahoy.getVisitToken = function () {
