@@ -68,7 +68,9 @@
     }
   }
 
-  function setReady() {
+  function setReady(e) {
+    console.log("setReady");
+    console.log(e);
     var callback;
     while (callback = queue.shift()) {
       callback();
