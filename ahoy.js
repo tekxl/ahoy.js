@@ -69,8 +69,6 @@
   }
 
   function setReady(e) {
-    console.log("setReady");
-    console.log(e);
     var callback;
     while (callback = queue.shift()) {
       callback();
@@ -184,7 +182,10 @@
 
         log(data);
 
-        $.post(visitsUrl, data, setReady, "json");
+        $.post(visitsUrl, data, function(data) {
+          console.log("setReady");
+          console.log(e);
+         }, "json");
       } else {
         log("Cookies disabled");
         setReady();
