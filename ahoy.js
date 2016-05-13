@@ -219,6 +219,7 @@
       id: generateId(),
       name: name,
       properties: properties,
+      user_prefs: userPrefs,
       time: (new Date()).getTime() / 1000.0
     };
     log(event);
