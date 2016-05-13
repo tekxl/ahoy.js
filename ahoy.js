@@ -23,7 +23,7 @@
   var page = ahoy.page || window.location.pathname;
   var visitsUrl = ahoy.visitsUrl || "/ahoy/visits";
   var eventsUrl = ahoy.eventsUrl || "/ahoy/events";
-  var userPrefs = window.ChaperoneSettings || {};
+  var userPrefs = {};
   var enabled = false;
 
   // cookies
@@ -245,7 +245,11 @@
     enabled = false;
   }
 
-  ahoy.init = function(API_KEY) {
+  ahoy.init = function(API_KEY, prefs) {
+    if (prefs) {
+      userPrefs = prefs;
+    }
+
     userPrefs.api_key = API_KEY;
     enabled = true;
 
