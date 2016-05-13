@@ -24,6 +24,7 @@
   var visitsUrl = ahoy.visitsUrl || "/ahoy/visits";
   var eventsUrl = ahoy.eventsUrl || "/ahoy/events";
   var userPrefs = {};
+  var api_key = null;
   var enabled = false;
 
   // cookies
@@ -173,6 +174,7 @@
     // generate unique id
     var event = {
       id: generateId(),
+      api_key: api_key,
       name: name,
       properties: properties,
       user_prefs: userPrefs,
@@ -250,7 +252,7 @@
       userPrefs = prefs;
     }
 
-    userPrefs.api_key = API_KEY;
+    api_key = API_KEY;
     enabled = true;
 
     if (visitId && visitorId && !track) {
@@ -277,6 +279,7 @@
         }
 
         var data = {
+          api_key: api_key,
           visit_token: visitId,
           visitor_token: visitorId,
           platform: ahoy.platform || "Web",
