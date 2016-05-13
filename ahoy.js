@@ -24,6 +24,7 @@
   var visitsUrl = ahoy.visitsUrl || "/ahoy/visits";
   var eventsUrl = ahoy.eventsUrl || "/ahoy/events";
   var userPrefs = window.ChaperoneSettings || {};
+  var inited = false;
 
   // cookies
 
@@ -141,53 +142,6 @@
   visitorId = getCookie("ahoy_visitor");
   track = getCookie("ahoy_track");
 
-  if (visitId && visitorId && !track) {
-    // TODO keep visit alive?
-    log("Active visit");
-    setReady();
-  } else {
-    if (track) {
-      destroyCookie("ahoy_track");
-    }
-
-    if (!visitId) {
-      visitId = generateId();
-      setCookie("ahoy_visit", visitId, visitTtl);
-    }
-
-    // make sure cookies are enabled
-    if (getCookie("ahoy_visit")) {
-      log("Visit started");
-
-      if (!visitorId) {
-        visitorId = generateId();
-        setCookie("ahoy_visitor", visitorId, visitorTtl);
-      }
-
-      var data = {
-        visit_token: visitId,
-        visitor_token: visitorId,
-        platform: ahoy.platform || "Web",
-        landing_page: window.location.href,
-        screen_width: window.screen.width,
-        screen_height: window.screen.height,
-        user_prefs: userPrefs
-      };
-
-      // referrer
-      if (document.referrer.length > 0) {
-        data.referrer = document.referrer;
-      }
-
-      log(data);
-
-      $.post(visitsUrl, data, setReady, "json");
-    } else {
-      log("Cookies disabled");
-      setReady();
-    }
-  }
-
   ahoy.getVisitId = ahoy.getVisitToken = function () {
     return visitId;
   };
@@ -214,6 +168,8 @@
   };
 
   ahoy.track = function (name, properties) {
+    if (!inited) return;
+
     // generate unique id
     var event = {
       id: generateId(),
@@ -234,6 +190,8 @@
   };
 
   ahoy.trackView = function () {
+    if (!inited) return;
+
     var properties = {
       url: window.location.href,
       title: document.title,
@@ -243,6 +201,8 @@
   };
 
   ahoy.trackClicks = function () {
+    if (!inited) return;
+
     $(document).on("click", "a, button, input[type=submit]", function (e) {
       var $target = $(e.currentTarget);
       var properties = eventProperties(e);
@@ -253,6 +213,8 @@
   };
 
   ahoy.trackSubmits = function () {
+    if (!inited) return;
+
     $(document).on("submit", "form", function (e) {
       var properties = eventProperties(e);
       ahoy.track("$submit", properties);
@@ -260,6 +222,8 @@
   };
 
   ahoy.trackChanges = function () {
+    if (!inited) return;
+
     $(document).on("change", "input, textarea, select", function (e) {
       var properties = eventProperties(e);
       ahoy.track("$change", properties);
@@ -273,16 +237,67 @@
     ahoy.trackChanges();
   };
 
-  // push events from queue
-  try {
-    eventQueue = JSON.parse(getCookie("ahoy_events") || "[]");
-  } catch (e) {
-    // do nothing
-  }
+  ahoy.init = function(API_KEY) {
+    userPrefs.api_key = API_KEY;
+    inited = true;
 
-  for (var i = 0; i < eventQueue.length; i++) {
-    trackEvent(eventQueue[i]);
-  }
+    if (visitId && visitorId && !track) {
+      // TODO keep visit alive?
+      log("Active visit");
+      setReady();
+    } else {
+      if (track) {
+        destroyCookie("ahoy_track");
+      }
 
+      if (!visitId) {
+        visitId = generateId();
+        setCookie("ahoy_visit", visitId, visitTtl);
+      }
+
+      // make sure cookies are enabled
+      if (getCookie("ahoy_visit")) {
+        log("Visit started");
+
+        if (!visitorId) {
+          visitorId = generateId();
+          setCookie("ahoy_visitor", visitorId, visitorTtl);
+        }
+
+        var data = {
+          visit_token: visitId,
+          visitor_token: visitorId,
+          platform: ahoy.platform || "Web",
+          landing_page: window.location.href,
+          screen_width: window.screen.width,
+          screen_height: window.screen.height,
+          user_prefs: userPrefs
+        };
+
+        // referrer
+        if (document.referrer.length > 0) {
+          data.referrer = document.referrer;
+        }
+
+        log(data);
+
+        $.post(visitsUrl, data, setReady, "json");
+      } else {
+        log("Cookies disabled");
+        setReady();
+      }
+    }
+
+    // push events from queue
+    try {
+      eventQueue = JSON.parse(getCookie("ahoy_events") || "[]");
+    } catch (e) {
+      // do nothing
+    }
+
+    for (var i = 0; i < eventQueue.length; i++) {
+      trackEvent(eventQueue[i]);
+    }
+  }
   window.Chaperone = ahoy;
 }(window));
