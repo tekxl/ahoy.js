@@ -24,7 +24,7 @@
   var visitsUrl = ahoy.visitsUrl || "/ahoy/visits";
   var eventsUrl = ahoy.eventsUrl || "/ahoy/events";
   var userPrefs = window.ChaperoneSettings || {};
-  var inited = false;
+  var enabled = false;
 
   // cookies
 
@@ -168,7 +168,7 @@
   };
 
   ahoy.track = function (name, properties) {
-    if (!inited) return;
+    if (!enabled) return;
 
     // generate unique id
     var event = {
@@ -190,7 +190,7 @@
   };
 
   ahoy.trackView = function () {
-    if (!inited) return;
+    if (!enabled) return;
 
     var properties = {
       url: window.location.href,
@@ -201,7 +201,7 @@
   };
 
   ahoy.trackClicks = function () {
-    if (!inited) return;
+    if (!enabled) return;
 
     $(document).on("click", "a, button, input[type=submit]", function (e) {
       var $target = $(e.currentTarget);
@@ -213,7 +213,7 @@
   };
 
   ahoy.trackSubmits = function () {
-    if (!inited) return;
+    if (!enabled) return;
 
     $(document).on("submit", "form", function (e) {
       var properties = eventProperties(e);
@@ -222,7 +222,7 @@
   };
 
   ahoy.trackChanges = function () {
-    if (!inited) return;
+    if (!enabled) return;
 
     $(document).on("change", "input, textarea, select", function (e) {
       var properties = eventProperties(e);
@@ -237,9 +237,17 @@
     ahoy.trackChanges();
   };
 
+  ahoy.enable = function() {
+    enabled = true;
+  }
+
+  ahoy.disable = function() {
+    enabled = false;
+  }
+
   ahoy.init = function(API_KEY) {
     userPrefs.api_key = API_KEY;
-    inited = true;
+    enabled = true;
 
     if (visitId && visitorId && !track) {
       // TODO keep visit alive?
