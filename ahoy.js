@@ -141,54 +141,52 @@
   visitorId = getCookie("ahoy_visitor");
   track = getCookie("ahoy_track");
 
-  ahoy.createVisit = function () {
-    if (visitId && visitorId && !track) {
-      // TODO keep visit alive?
-      log("Active visit");
-      setReady();
-    } else {
-      if (track) {
-        destroyCookie("ahoy_track");
-      }
-
-      if (!visitId) {
-        visitId = generateId();
-        setCookie("ahoy_visit", visitId, visitTtl);
-      }
-
-      // make sure cookies are enabled
-      if (getCookie("ahoy_visit")) {
-        log("Visit started");
-
-        if (!visitorId) {
-          visitorId = generateId();
-          setCookie("ahoy_visitor", visitorId, visitorTtl);
-        }
-
-        var data = {
-          visit_token: visitId,
-          visitor_token: visitorId,
-          platform: ahoy.platform || "Web",
-          landing_page: window.location.href,
-          screen_width: window.screen.width,
-          screen_height: window.screen.height,
-          user_prefs: userPrefs
-        };
-
-        // referrer
-        if (document.referrer.length > 0) {
-          data.referrer = document.referrer;
-        }
-
-        log(data);
-
-        $.post(visitsUrl, data, setReady, "json");
-      } else {
-        log("Cookies disabled");
-        setReady();
-      }
+  if (visitId && visitorId && !track) {
+    // TODO keep visit alive?
+    log("Active visit");
+    setReady();
+  } else {
+    if (track) {
+      destroyCookie("ahoy_track");
     }
-  };
+
+    if (!visitId) {
+      visitId = generateId();
+      setCookie("ahoy_visit", visitId, visitTtl);
+    }
+
+    // make sure cookies are enabled
+    if (getCookie("ahoy_visit")) {
+      log("Visit started");
+
+      if (!visitorId) {
+        visitorId = generateId();
+        setCookie("ahoy_visitor", visitorId, visitorTtl);
+      }
+
+      var data = {
+        visit_token: visitId,
+        visitor_token: visitorId,
+        platform: ahoy.platform || "Web",
+        landing_page: window.location.href,
+        screen_width: window.screen.width,
+        screen_height: window.screen.height,
+        user_prefs: userPrefs
+      };
+
+      // referrer
+      if (document.referrer.length > 0) {
+        data.referrer = document.referrer;
+      }
+
+      log(data);
+
+      $.post(visitsUrl, data, setReady, "json");
+    } else {
+      log("Cookies disabled");
+      setReady();
+    }
+  }
 
   ahoy.getVisitId = ahoy.getVisitToken = function () {
     return visitId;
