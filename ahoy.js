@@ -252,6 +252,10 @@
       userPrefs = prefs;
     }
 
+    if (!userPrefs.id) {
+      userPrefs.id = generateId();
+    }
+
     api_key = API_KEY;
     enabled = true;
 
