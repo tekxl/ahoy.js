@@ -13,7 +13,7 @@
 
   var ahoy = window.Chaperone || {};
   var $ = window.jQuery || window.Zepto || window.$;
-  var visitId, visitorId, userId, track;
+  var visitId, visitorId, track;
   var visitTtl = 4 * 60; // 4 hours
   var visitorTtl = 2 * 365 * 24 * 60; // 2 years
   var userTtl = visitorTtl; // 2 years
@@ -142,7 +142,6 @@
 
   visitId = getCookie("ahoy_visit");
   visitorId = getCookie("ahoy_visitor");
-  userId = getCookie("ahoy_user");
   track = getCookie("ahoy_track");
 
   ahoy.getVisitId = ahoy.getVisitToken = function () {
@@ -151,10 +150,6 @@
 
   ahoy.getVisitorId = ahoy.getVisitorToken = function () {
     return visitorId;
-  };
-
-  ahoy.getUserId = ahoy.getUserToken = function () {
-    return userId;
   };
 
   ahoy.reset = function () {
@@ -255,20 +250,13 @@
   }
 
   ahoy.init = function(API_KEY, prefs) {
-    if (!userId) {
-      userId = generateId();
-      setCookie("ahoy_user", userId, userTtl);
-    }
-
-    userPrefs = $.extend({
-      id: userId
-    }, prefs);
-
+    userPrefs = $.extend({}, prefs);
     api_key = API_KEY;
     enabled = true;
 
     if (visitId && visitorId && !track) {
       // TODO keep visit alive?
+      userPrefs.visit_token = visitorId;
       log("Active visit");
       setReady();
     } else {
@@ -289,6 +277,8 @@
           visitorId = generateId();
           setCookie("ahoy_visitor", visitorId, visitorTtl);
         }
+
+        userPrefs.visit_token = visitorId;
 
         var data = {
           api_key: api_key,
