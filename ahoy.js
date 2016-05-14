@@ -13,9 +13,10 @@
 
   var ahoy = window.Chaperone || {};
   var $ = window.jQuery || window.Zepto || window.$;
-  var visitId, visitorId, track;
+  var visitId, visitorId, userId, track;
   var visitTtl = 4 * 60; // 4 hours
   var visitorTtl = 2 * 365 * 24 * 60; // 2 years
+  var userTtl = visitorTtl; // 2 years
   var isReady = false;
   var queue = [];
   var canStringify = typeof(JSON) !== "undefined" && typeof(JSON.stringify) !== "undefined";
@@ -141,6 +142,7 @@
 
   visitId = getCookie("ahoy_visit");
   visitorId = getCookie("ahoy_visitor");
+  userId = getCookie("ahoy_user");
   track = getCookie("ahoy_track");
 
   ahoy.getVisitId = ahoy.getVisitToken = function () {
@@ -151,9 +153,14 @@
     return visitorId;
   };
 
+  ahoy.getUserId = ahoy.getUserToken = function () {
+    return userId;
+  };
+
   ahoy.reset = function () {
     destroyCookie("ahoy_visit");
     destroyCookie("ahoy_visitor");
+    destroyCookie("ahoy_user");
     destroyCookie("ahoy_events");
     destroyCookie("ahoy_track");
     return true;
@@ -248,13 +255,14 @@
   }
 
   ahoy.init = function(API_KEY, prefs) {
-    if (prefs) {
-      userPrefs = prefs;
+    if (!userId) {
+      userId = generateId();
+      setCookie("ahoy_user", userId, userTtl);
     }
 
-    if (!userPrefs.id) {
-      userPrefs.id = generateId();
-    }
+    userPrefs = $.extend({
+      id: userId
+    }, prefs);
 
     api_key = API_KEY;
     enabled = true;
