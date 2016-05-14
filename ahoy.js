@@ -256,7 +256,7 @@
 
     if (visitId && visitorId && !track) {
       // TODO keep visit alive?
-      userPrefs.visit_token = visitorId;
+      userPrefs.visitor_token = visitorId;
       log("Active visit");
       setReady();
     } else {
@@ -278,7 +278,7 @@
           setCookie("ahoy_visitor", visitorId, visitorTtl);
         }
 
-        userPrefs.visit_token = visitorId;
+        userPrefs.visitor_token = visitorId;
 
         var data = {
           api_key: api_key,
