@@ -152,6 +152,10 @@
     return visitorId;
   };
 
+  ahoy.getUserPrefs = function() {
+    return userPrefs;
+  }
+
   ahoy.reset = function () {
     destroyCookie("ahoy_visit");
     destroyCookie("ahoy_visitor");
