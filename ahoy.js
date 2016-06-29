@@ -156,6 +156,11 @@
     return userPrefs;
   }
 
+  ahoy.setUserPrefs = function(prefs) {
+    userPrefs = prefs;
+    userPrefs.visitor_token = visitorId;
+  }
+
   ahoy.reset = function () {
     destroyCookie("ahoy_visit");
     destroyCookie("ahoy_visitor");
