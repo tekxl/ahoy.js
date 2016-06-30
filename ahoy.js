@@ -12,7 +12,7 @@
   "use strict";
 
   window.__ = window.__ or {};
-  var ahoy = {};
+  var ahoy = window.__.Analytics || {};
   var $ = window.jQuery || window.Zepto || window.$;
   var visitId, visitorId, track;
   var visitTtl = 4 * 60; // 4 hours
@@ -23,8 +23,8 @@
   var canStringify = typeof(JSON) !== "undefined" && typeof(JSON.stringify) !== "undefined";
   var eventQueue = [];
   var page = ahoy.page || window.location.pathname;
-  var visitsUrl = ahoy.visitsUrl || "/ahoy/visits";
-  var eventsUrl = ahoy.eventsUrl || "/ahoy/events";
+  var visitsUrl = '/ahoy/visits';
+  var eventsUrl = '/ahoy/events';
   var userPrefs = {};
   var api_key = null;
   var enabled = false;
@@ -160,6 +160,14 @@
   ahoy.setUserPrefs = function(prefs) {
     userPrefs = prefs;
     userPrefs.visitor_token = visitorId;
+  }
+
+  ahoy.setVisitsUrl = function(url) {
+    visitsUrl = url;
+  }
+
+  ahoy.setEventsUrl = function(url) {
+    eventsUrl = url;
   }
 
   ahoy.reset = function () {
