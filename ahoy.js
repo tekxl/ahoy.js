@@ -11,7 +11,7 @@
 (function (window) {
   "use strict";
 
-  window.__ = window.__ or {};
+  window.__ = window.__ || {};
   var ahoy = window.__.Analytics || {};
   var $ = window.jQuery || window.Zepto || window.$;
   var visitId, visitorId, track;
